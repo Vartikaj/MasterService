@@ -1,0 +1,12 @@
+[
+  {
+    "ContainingType": "MasterServiceDemo.Controllers.UserController",
+    "Method": "GetAllData",
+    "RelativePath": "User",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
