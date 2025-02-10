@@ -14,11 +14,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.1" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="CommonService">
-      <HintPath>..\..\CommonService\CommonService\bin\Debug\net8.0\CommonService.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	
+	<ItemGroup>
+		<Reference Include="CommonService">
+			<HintPath>libs\CommonService.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
 </Project>
