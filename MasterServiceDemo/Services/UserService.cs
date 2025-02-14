@@ -16,6 +16,8 @@ namespace MasterServiceDemo.Services
         {
             Response<object> response = new Response<object>();
 
+            response.Model = _dbgateway.ExeScalarQuery<object>("SELECT iduserData, userDatacol, userEmail, userPhone FROM userdata;");
+
             response.Message = string.Empty;
 
             return response;
