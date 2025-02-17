@@ -1,4 +1,5 @@
 ﻿using CommonService.Utility;
+using Dapper;
 using MasterServiceDemo.Interfaces;
 using MasterServiceDemo.Models;
 
@@ -12,16 +13,17 @@ namespace MasterServiceDemo.Services
             this._dbgateway = new DbGateway(_connection);
         }
 
-        public async Task<Response<object>> GetAllData()
+        public async Task<Response<UserModel>> GetAllData()
         {
-            Response<object> response = new Response<object>();
+            Response<UserModel> response = new Response<UserModel>();
 
-            response.Model = _dbgateway.ExeScalarQuery<object>("SELECT iduserData, userDatacol, userEmail, userPhone FROM userdata;");
+            List<UserModel> userModels = await _dbgateway.ExeQueryList<UserModel>("SELECT iduserData, userDatacol, userEmail, userPhone FROM userdata;");
+            response.LSTModel = userModels;
 
             response.Message = string.Empty;
 
             return response;
-            
+
         }
     }
 }
