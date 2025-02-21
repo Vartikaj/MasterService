@@ -1,5 +1,7 @@
-﻿using MasterServiceDemo.Interfaces;
+﻿using CommonService.Utility;
+using MasterServiceDemo.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using RabbitMQ.Client;
 
 namespace MasterServiceDemo.Controllers
 {
@@ -9,10 +11,11 @@ namespace MasterServiceDemo.Controllers
     {
         private ILogger _logger;
         private IUser _user;
-
-        public UserController(ILogger<UserController> logger, IUser user) {
+        private readonly IConnection _connection;
+        public UserController(ILogger<UserController> logger, IUser user, RabbitMQConnectionHelper rabbitMQ) {
             _logger = logger;
-            _user = user;   
+            _user = user;
+            _connection = rabbitMQ.GetConnection();
         }
 
         [HttpGet]

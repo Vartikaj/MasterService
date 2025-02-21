@@ -14,6 +14,10 @@ builder.Services.AddSwaggerGen();
 //Add Swagger Custom Documentation with Authorize the header functionality
 builder.Services.AddSwaggerDocumentation();
 
+//run RabbitMq by default and if there is any task in the queue complete it.
+builder.Services.AddHostedService<RabbitMQBackgroundService>();
+
+
 // add the utility servicetoscoped folder 
 ServiceToScope oServiceToScope = new ServiceToScope(builder.Configuration);
 oServiceToScope.AddToScope(builder.Services);
