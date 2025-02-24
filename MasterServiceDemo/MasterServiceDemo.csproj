@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -16,11 +16,13 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0"/>
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.1"/>
   </ItemGroup>
-
   <ItemGroup>
-    <Folder Include="libs/"/>
+    <Folder Include="libs/" Include="libs/"/>
     <Reference Include="CommonService">
       <HintPath>libs/CommonService.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="libs/"/>
   </ItemGroup>
 </Project>
