@@ -16,7 +16,8 @@ namespace MasterServiceDemo.Utility
         public void AddToScope(IServiceCollection services)
         {
             services.AddTransient<IUser>(s => new UserService(Configuration.GetSection("ConnectionString:SqlConnection").Value));
-            services.AddTransient(s => new ConsumerService());
+            // services.AddTransient<ConsumerService>();
+
         }
     }
 }

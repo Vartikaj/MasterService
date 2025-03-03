@@ -1,5 +1,4 @@
-﻿using MasterServiceDemo.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace MasterServiceDemo.Utility
 {

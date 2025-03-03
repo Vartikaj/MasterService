@@ -7,17 +7,15 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Text.Json;
 
-namespace MasterServiceDemo.Services
+namespace MasterServiceDemo.Utility
 {
     public class ConsumerService
     {
         private readonly IConnection _connection;
 
-        private readonly RabbitMQConnectionHelper rabbitMQHelper;
-
-        public ConsumerService()
+        public ConsumerService(RabbitMQConnectionHelper rabbitMQConnectionHelper)
         {
-            _connection = rabbitMQHelper.GetConnection();
+            _connection = rabbitMQConnectionHelper.GetConnection();
         }
 
         public async Task ConsumeQueueAsync(string queueName)
@@ -28,14 +26,14 @@ namespace MasterServiceDemo.Services
                 durable: true,
                 exclusive: true,
                 autoDelete: true,
-                arguments : null
+                arguments: null
             );
 
-            var consumer = new AsyncEventingBasicConsumer( channel );
+            var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.ReceivedAsync += async (model, eventArgs) =>
             {
                 var body = eventArgs.Body.ToArray();
-                var message = Encoding.UTF8.GetString( body );
+                var message = Encoding.UTF8.GetString(body);
                 var order = JsonSerializer.Deserialize<OrderModel>(message);
 
                 Console.WriteLine($"Received Order: {order.Id} - {order.ProductName} (Quantity: {order.Quantity})");
