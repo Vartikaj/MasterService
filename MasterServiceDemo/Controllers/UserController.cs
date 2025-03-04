@@ -11,11 +11,12 @@ namespace MasterServiceDemo.Controllers
     {
         private ILogger _logger;
         private IUser _user;
-        private readonly IConnection _connection;
+        private readonly Task<IConnection> _connectionTask;
+
         public UserController(ILogger<UserController> logger, IUser user, RabbitMQConnectionHelper rabbitMQ) {
             _logger = logger;
             _user = user;
-            _connection = rabbitMQ.GetConnection();
+            _connectionTask = rabbitMQ.GetConnectionAsync();
         }
 
         [HttpGet]

@@ -17,7 +17,6 @@ namespace MasterServiceDemo.Utility
         {
             services.AddTransient<IUser>(s => new UserService(Configuration.GetSection("ConnectionString:SqlConnection").Value));
             // services.AddTransient<ConsumerService>();
-
         }
     }
 }

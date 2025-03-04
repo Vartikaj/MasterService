@@ -26,7 +26,7 @@ oServiceToScope.AddToScope(builder.Services);
 // builder.Services.AddHostedService<RabbitMQBackgroundService>();
 
 // Register RabbitMQConnectionHelper
-//builder.Services.AddSingleton<RabbitMQConnectionHelper>();
+builder.Services.AddSingleton<RabbitMQConnectionHelper>();
 
 var app = builder.Build();
 

@@ -11,21 +11,24 @@ namespace MasterServiceDemo.Utility
 {
     public class ConsumerService
     {
-        private readonly IConnection _connection;
+        private readonly Task<IConnection> _connectionTask;
+        private readonly RabbitMQConnectionHelper _rabbit;
 
         public ConsumerService(RabbitMQConnectionHelper rabbitMQConnectionHelper)
         {
-            _connection = rabbitMQConnectionHelper.GetConnection();
+            _connectionTask = rabbitMQConnectionHelper.GetConnectionAsync();
+            _rabbit = rabbitMQConnectionHelper;
         }
 
         public async Task ConsumeQueueAsync(string queueName)
         {
-            using var channel = await _connection.CreateChannelAsync();
+            var connection = await _connectionTask;
+            using var channel = await connection.CreateChannelAsync();
             channel.QueueDeclareAsync(
                 queue: queueName,
-                durable: true,
-                exclusive: true,
-                autoDelete: true,
+                durable: false,
+                exclusive: false,
+                autoDelete: false,
                 arguments: null
             );
 
@@ -35,9 +38,14 @@ namespace MasterServiceDemo.Utility
                 var body = eventArgs.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
                 var order = JsonSerializer.Deserialize<OrderModel>(message);
+                var replyToQueue = eventArgs.BasicProperties.ReplyTo;
 
                 Console.WriteLine($"Received Order: {order.Id} - {order.ProductName} (Quantity: {order.Quantity})");
-                await Task.Yield();
+
+                // send Response
+
+                var responseSend = new Utility.RabbitMQResponseSender(_rabbit);
+                responseSend.SendResponse(replyToQueue, $"Processed : {message}");
             };
 
             channel.BasicConsumeAsync(queue: queueName, autoAck: true, consumer: consumer);
