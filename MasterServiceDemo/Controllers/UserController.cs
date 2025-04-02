@@ -12,11 +12,13 @@ namespace MasterServiceDemo.Controllers
         private ILogger _logger;
         private IUser _user;
         private readonly Task<IConnection> _connectionTask;
+        public readonly RabbitMQConnectionHelper rabbit;
 
-        public UserController(ILogger<UserController> logger, IUser user, RabbitMQConnectionHelper rabbitMQ) {
+        public UserController(ILogger<UserController> logger, IUser user, RabbitMQConnectionHelper _rabbitMQ) {
             _logger = logger;
             _user = user;
-            _connectionTask = rabbitMQ.GetConnectionAsync();
+            _connectionTask = _rabbitMQ.GetConnectionAsync();
+            rabbit = _rabbitMQ;
         }
 
         [HttpGet]
@@ -26,7 +28,7 @@ namespace MasterServiceDemo.Controllers
             {
                 try
                 {
-                    var getData = await _user.GetAllData();
+                    var getData = await _user.GetAllData(rabbit);
                     return Ok(getData);
                 } catch (Exception ex)
                 {

@@ -40,15 +40,14 @@ namespace MasterServiceDemo.Utility
                 var order = JsonSerializer.Deserialize<OrderModel>(message);
                 var replyToQueue = eventArgs.BasicProperties.ReplyTo;
 
-                Console.WriteLine($"Received Order: {order.Id} - {order.ProductName} (Quantity: {order.Quantity})");
-
+                // Console.WriteLine($"Received Order: {order.Id} - {order.ProductName} (Quantity: {order.Quantity})");
                 // send Response
-
                 var responseSend = new Utility.RabbitMQResponseSender(_rabbit);
                 responseSend.SendResponse(replyToQueue, $"Processed : {message}");
             };
 
-            channel.BasicConsumeAsync(queue: queueName, autoAck: true, consumer: consumer);
+            await channel.BasicConsumeAsync(queue: queueName, autoAck: true, consumer: consumer);
+            Console.WriteLine($"[Producer] Sent Request:");
         }
     }
 }

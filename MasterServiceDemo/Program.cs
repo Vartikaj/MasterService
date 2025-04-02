@@ -16,6 +16,9 @@ builder.Services.AddSwaggerGen();
 //Add Swagger Custom Documentation with Authorize the header functionality
 builder.Services.AddSwaggerDocumentation();
 
+// Register RabbitMQConnectionHelper
+builder.Services.AddSingleton<RabbitMQConnectionHelper>();
+
 // add the utility servicetoscoped folder 
 ServiceToScope oServiceToScope = new ServiceToScope(builder.Configuration);
 oServiceToScope.AddToScope(builder.Services);
@@ -25,8 +28,7 @@ oServiceToScope.AddToScope(builder.Services);
 // Register the background service
 // builder.Services.AddHostedService<RabbitMQBackgroundService>();
 
-// Register RabbitMQConnectionHelper
-builder.Services.AddSingleton<RabbitMQConnectionHelper>();
+
 
 var app = builder.Build();
 

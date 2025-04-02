@@ -9,18 +9,17 @@ namespace MasterServiceDemo.Services
     public class UserService : IUser
     {
         private DbGateway _dbgateway;
-        private readonly RabbitMQConnectionHelper _rabbitMQ;
         public UserService(string _connection)
         {
             this._dbgateway = new DbGateway(_connection);
         }
 
-        public async Task<Response<UserModel>> GetAllData()
+        public async Task<Response<UserModel>> GetAllData(RabbitMQConnectionHelper rabbitMq)
         {
             Response<UserModel> response = new Response<UserModel>();
             string requestQueue = "requestQueue";
 
-            var listener = new Utility.ConsumerService(_rabbitMQ);
+            var listener = new Utility.ConsumerService(rabbitMq);
             listener.ConsumeQueueAsync(requestQueue);
 
             Console.ReadLine(); // Keep app running
