@@ -30,7 +30,7 @@ namespace MasterServiceDemo.Utility
                                             routingKey: responseQueue,
                                             body: body);
 
-            Console.WriteLine($"[UserService] Sent Response: {responseMessage}");
+            Console.WriteLine($"[MasterService] Sent Response: {responseMessage}");
         }
 
     }

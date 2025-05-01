@@ -23,31 +23,63 @@ namespace MasterServiceDemo.Utility
         public async Task ConsumeQueueAsync(string queueName)
         {
             var connection = await _connectionTask;
-            using var channel = await connection.CreateChannelAsync();
-            channel.QueueDeclareAsync(
-                queue: queueName,
-                durable: false,
+            var channel = await connection.CreateChannelAsync();
+
+            await channel.QueueDeclareAsync(queue: queueName, durable: false,
                 exclusive: false,
                 autoDelete: false,
-                arguments: null
-            );
+                arguments: null,
+                passive: false,
+                cancellationToken: CancellationToken.None);
 
             var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.ReceivedAsync += async (model, eventArgs) =>
             {
                 var body = eventArgs.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var order = JsonSerializer.Deserialize<OrderModel>(message);
                 var replyToQueue = eventArgs.BasicProperties.ReplyTo;
+                var correlationId = eventArgs.BasicProperties.CorrelationId;
 
-                // Console.WriteLine($"Received Order: {order.Id} - {order.ProductName} (Quantity: {order.Quantity})");
-                // send Response
-                var responseSend = new Utility.RabbitMQResponseSender(_rabbit);
-                responseSend.SendResponse(replyToQueue, $"Processed : {message}");
+                var order = JsonSerializer.Deserialize<OrderModel>(message);
+
+                Console.WriteLine($"[MasterService] Received Order: {message}");
+
+                // Simulate some DB processing or business logic
+                var responseMessage = $"Processed: {order.ProductName}";
+
+                await SendResponse(replyToQueue, responseMessage, correlationId);
             };
 
             await channel.BasicConsumeAsync(queue: queueName, autoAck: true, consumer: consumer);
-            Console.WriteLine($"[Producer] Sent Request:");
+        }
+
+        private async Task SendResponse(string responseQueue, string message, string correlationId)
+        {
+            var connection = await _connectionTask;
+            var channel = await connection.CreateChannelAsync();
+
+            await channel.QueueDeclareAsync(queue: responseQueue, durable: false,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null,
+                passive: false,
+                cancellationToken: CancellationToken.None);
+
+            var props = new BasicProperties
+            {
+                CorrelationId = correlationId
+            };
+
+            var body = Encoding.UTF8.GetBytes(message);
+            await channel.BasicPublishAsync(exchange: "", routingKey: responseQueue, body: body);
+
+            Console.WriteLine($"[MasterService] Sent Response to {responseQueue} with CorrelationId: {correlationId}");
+        }
+
+        public async Task StartConsumer()
+        {
+            var consumer = new ConsumerService(_rabbit);
+            await consumer.ConsumeQueueAsync("requestQueue");
         }
     }
 }

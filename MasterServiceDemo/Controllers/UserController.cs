@@ -1,5 +1,6 @@
 ﻿using CommonService.Utility;
 using MasterServiceDemo.Interfaces;
+using MasterServiceDemo.Utility;
 using Microsoft.AspNetCore.Mvc;
 using RabbitMQ.Client;
 
@@ -22,21 +23,10 @@ namespace MasterServiceDemo.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllData()
+        public async Task StartConsumer()
         {
-            if(ModelState.IsValid)
-            {
-                try
-                {
-                    var getData = await _user.GetAllData(rabbit);
-                    return Ok(getData);
-                } catch (Exception ex)
-                {
-                    return StatusCode(500, ex.Message);
-                }
-            }
-
-            return BadRequest();
+            var consumer = new ConsumerService(rabbit);
+            await consumer.ConsumeQueueAsync("requestQueue");
         }
     }
 }
